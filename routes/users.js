@@ -5,7 +5,7 @@ var router = express.Router();
 router.post('/', function(req, res, next) {
   console.log(req.body);
 
-  res.send({ fulfillmentText: `hello world3 ${req.body.intent.displayName}` });
+  res.send({ fulfillmentText: 'hello world3' });
 
   // if (req.body.intent.displayName == 'Default Welcome Intent') {
   //   res.send({ fulfillmentText: 'hello world' });
