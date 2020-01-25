@@ -7,7 +7,7 @@ router.post('/', function(req, res, next) {
 
   if (req.body.intent.displayName === 'Default Welcome Intent') {
     let response = {
-      fulfillment_text: 'Hello! Ask me about your house energy consumption!',
+      fulfillmentText: 'Hello! Ask me about your house energy consumption!',
     };
     return res.send(response);
   } else {
