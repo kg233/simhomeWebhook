@@ -7,16 +7,16 @@ router.post('/', function(req, res, next) {
 
   res.send({ fulfillmentText: `hello world3 ${req.body.intent.displayName}` });
 
-  if (req.body.intent.displayName == 'Default Welcome Intent') {
-    res.send({ fulfillmentText: 'hello world' });
-  } else {
-    res.send({ fulfillmentText: 'hello world2' });
-    //   let r = `display name: ${req.body.intent.displayName}`;
-    //   let response = {
-    //     fulfillment_messages: [{ text: { text: [r] } }],
-    //   };
-    //   return res.send(response);
-  }
+  // if (req.body.intent.displayName == 'Default Welcome Intent') {
+  //   res.send({ fulfillmentText: 'hello world' });
+  // } else {
+  //   res.send({ fulfillmentText: 'hello world2' });
+  //   //   let r = `display name: ${req.body.intent.displayName}`;
+  //   //   let response = {
+  //   //     fulfillment_messages: [{ text: { text: [r] } }],
+  //   //   };
+  //   //   return res.send(response);
+  // }
 });
 
 module.exports = router;
