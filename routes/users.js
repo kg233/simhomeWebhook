@@ -8,12 +8,12 @@ router.post('/', function(req, res, next) {
     let response = {
       fulfillment_text: 'hello world',
     };
-    res.json(response);
+    return res.json(response);
   } else {
     let response = {
       fulfillment_text: `display name: ${req.body.intent.displayName}`,
     };
-    res.json(response);
+    return res.json(response);
   }
 });
 
