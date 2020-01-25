@@ -5,20 +5,19 @@ var router = express.Router();
 router.post('/', function(req, res, next) {
   console.log(req.body);
 
-  res.send({ fulfillmentText: 'hello world' });
-
-  // if (req.body.intent.displayName === 'Default Welcome Intent') {
-  //   let response = {
-  //     fulfillment_text: 'hello world',
-  //   };
-  //   return res.send(response);
-  // } else {
-  //   let r = `display name: ${req.body.intent.displayName}`;
-  //   let response = {
-  //     fulfillment_messages: [{ text: { text: [r] } }],
-  //   };
-  //   return res.send(response);
-  // }
+  if (req.body.intent.displayName === 'Default Welcome Intent') {
+    let response = {
+      fulfillment_text: 'Hello! Ask me about your house energy consumption!',
+    };
+    return res.send(response);
+  } else {
+    let r = `display name: ${req.body.intent.displayName}`;
+    let response = {
+      fulfillmentText: r,
+      fulfillmentMessages: [{ text: { text: ['rich response hehe'] } }],
+    };
+    return res.send(response);
+  }
 });
 
 module.exports = router;
