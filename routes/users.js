@@ -10,8 +10,9 @@ router.post('/', function(req, res, next) {
     };
     return res.json(response);
   } else {
+    let r = `display name: ${req.body.intent.displayName}`;
     let response = {
-      fulfillment_text: `display name: ${req.body.intent.displayName}`,
+      fulfillment_messages: [{ text: { text: [r] } }],
     };
     return res.json(response);
   }
