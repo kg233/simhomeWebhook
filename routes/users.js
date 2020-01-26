@@ -1,22 +1,32 @@
+require('dotenv').config();
+
 var express = require('express');
 var router = express.Router();
 
-/* GET users listing. */
+const makeRes = require('../utils/makeRes');
+const getEnergy = require('../fulfillments/getEnergy');
+
 router.post('/', function(req, res, next) {
-  console.log(req.body);
+  console.log(JSON.stringify(req.body));
 
-  res.send({ fulfillmentText: 'hello world3' });
+  let intent = req.body.queryResult.intent.displayName;
+  let platform = req.body.originalDetectIntentRequest.source;
+  console.log('intent: ' + intent);
+  switch (intent) {
+    case 'Default Welcome Intent':
+      let resString = 'Hello!, ask me about energy datas!';
+      let response = makeRes(resString, platform);
+      res.send(response);
+      break;
+    case 'get-energy':
+      getEnergy(req.body.queryResult.parameters).then(resString => {
+        let response = makeRes(resString, platform);
 
-  // if (req.body.intent.displayName == 'Default Welcome Intent') {
-  //   res.send({ fulfillmentText: 'hello world' });
-  // } else {
-  //   res.send({ fulfillmentText: 'hello world2' });
-  //   //   let r = `display name: ${req.body.intent.displayName}`;
-  //   //   let response = {
-  //   //     fulfillment_messages: [{ text: { text: [r] } }],
-  //   //   };
-  //   //   return res.send(response);
-  // }
+        console.log('sending: ' + response);
+        res.send(response);
+      });
+      break;
+  }
 });
 
 module.exports = router;
