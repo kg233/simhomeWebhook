@@ -5,6 +5,8 @@ var router = express.Router();
 
 const makeRes = require('../utils/makeRes');
 const getEnergy = require('../fulfillments/getEnergy');
+const getMonthly = require('../fulfillments/getMonthly');
+const getTop3FromN = require('../fulfillments/getTop3');
 
 router.post('/', function(req, res, next) {
   console.log(JSON.stringify(req.body));
@@ -20,6 +22,22 @@ router.post('/', function(req, res, next) {
       break;
     case 'get-energy':
       getEnergy(req.body.queryResult.parameters).then(resString => {
+        let response = makeRes(resString, platform);
+
+        console.log('sending: ' + JSON.stringify(response));
+        res.send(response);
+      });
+      break;
+    case 'get-monthly-total':
+      getMonthly().then(result => {
+        let response = makeRes(result);
+
+        console.log('sending: ' + JSON.stringify(response));
+        res.send(response);
+      });
+
+    case 'get-top-3':
+      getTop3FromN(0).then(resString => {
         let response = makeRes(resString, platform);
 
         console.log('sending: ' + response);
