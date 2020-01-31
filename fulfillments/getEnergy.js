@@ -39,7 +39,7 @@ function fetchEnergy(deviceName, id, period) {
 
   return axios
     .get(
-      `http://pluto.calit2.uci.edu:8081/v1/energy/usage?DeviceID=${id}&StartDate=${period.startDate}&EndDate=${period.endDate}`
+      `${process.env.getEnergyURL}?DeviceID=${id}&StartDate=${period.startDate}&EndDate=${period.endDate}`
     )
     .then(response => {
       //console.log('here', response.data);
