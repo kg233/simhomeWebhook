@@ -1,3 +1,7 @@
+//build a response with a header and a basic body, based on the correspondnig platform
+//currently platform only checks for google
+//no context at all
+
 function makeRes(msg, google) {
   if (google) {
     return {

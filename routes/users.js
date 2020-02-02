@@ -7,6 +7,7 @@ const makeRes = require('../utils/makeRes');
 const getEnergy = require('../fulfillments/getEnergy');
 const getMonthly = require('../fulfillments/getMonthly');
 const getTop3FromN = require('../fulfillments/getTop3');
+const getDevices = require('../fulfillments/getDevices');
 
 router.post('/', function(req, res, next) {
   console.log(JSON.stringify(req.body));
@@ -44,6 +45,36 @@ router.post('/', function(req, res, next) {
         res.send(response);
       });
       break;
+
+    case 'ask-devices':
+      //get the list of devices from api, store them in context to be extracted later
+      let deviceList = getDevices();
+      if (typeof deviceList === 'string') {
+        let response = makeRes(
+          'error occurred trying to get devices, please try again',
+          platform
+        );
+
+        console.log('sending: ' + response);
+        res.send(response);
+        break;
+      }
+      let response = makeRes(
+        `you have ${deviceList.length} device${
+          deviceList.length == 1 ? '' : 's'
+        }, would you like to hear the name${
+          deviceList.length == 1 ? '' : 's'
+        }?`,
+        platform
+      );
+      console.log('sending: ' + response);
+      res.send(response);
+      break;
+
+    // response.outputContexts = response.outPutContexts
+    //   ? response.outPutContexts
+    //   : [];
+    // response.outputContexts.push()
   }
 });
 
