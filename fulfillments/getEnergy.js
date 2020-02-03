@@ -1,3 +1,6 @@
+//get energy for a device specified a time period and return a readable string
+//todo: when user doesn't specify a period, default to a month
+
 const axios = require('axios');
 
 const threeDays = 259200000; //if <= three days, we return each individual
