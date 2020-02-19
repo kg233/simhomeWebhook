@@ -12,6 +12,6 @@ simhome webhook
 
   in dialogflow console, goto fulfillment and enable webhook
 
-  use ngrok to get a url, paste this url into webhook url in dialogflow
+  use ngrok application to get a url, paste this url into webhook url in dialogflow
 
   add `/users` at the end of url
