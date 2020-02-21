@@ -67,7 +67,7 @@ router.post('/', function(req, res, next) {
         res.send(response);
       }
     });
-  } else if (intent === 'ask-devices-yes') {
+  } else if (intent === 'ask-devices - yes') {
     let arr =
       req.body.queryResult.outputContexts[
         req.body.queryResult.outputContexts.length - 2
