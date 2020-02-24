@@ -6,7 +6,7 @@ var router = express.Router();
 const makeRes = require('../utils/makeRes');
 const getEnergy = require('../fulfillments/getEnergy');
 const getMonthly = require('../fulfillments/getMonthly');
-const getTop3FromN = require('../fulfillments/getTop3');
+const getTop3 = require('../fulfillments/getTop3');
 const getDevices = require('../fulfillments/getDevices');
 
 router.post('/', function(req, res, next) {
@@ -28,13 +28,13 @@ router.post('/', function(req, res, next) {
     });
   } else if (intent === 'get-monthly-total') {
     getMonthly().then(result => {
-      let response = makeRes(result);
+      let response = makeRes(result, platform);
 
       console.log('sending: ' + JSON.stringify(response));
       res.send(response);
     });
   } else if (intent === 'get-top-3') {
-    getTop3FromN(0).then(resString => {
+    getTop3().then(resString => {
       let response = makeRes(resString, platform);
 
       console.log('sending: ' + response);
