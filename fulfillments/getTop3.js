@@ -2,6 +2,7 @@
 //get the total energy usage for this month as well as the top 3 energy consuming devices
 
 const urlMaker = require('../utils/urlMaker');
+
 const roundKWh = require('../utils/roundKWh');
 
 const axios = require('axios');
@@ -47,6 +48,7 @@ async function getTop3(start) {
     sentence += `${devices[i].name} used ${roundKWh(
       devices[i].kWh
     )} kilowatt hours,\n`;
+
   }
 
   return sentence;
