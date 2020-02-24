@@ -2,6 +2,9 @@
 //get the total energy usage for this month as well as the top 3 energy consuming devices
 
 const urlMaker = require('../utils/urlMaker');
+
+const roundKWh = require('../utils/roundKWh');
+
 const axios = require('axios');
 
 async function getTop3(start) {
@@ -30,17 +33,22 @@ async function getTop3(start) {
     return 'error occured, please try again later';
   }
 
-  let sentence = `You have used ${monthlyTotal} kilowatt hours of energy, `;
+  let sentence = `You have used ${roundKWh(
+    monthlyTotal
+  )} kilowatt hours of energy, `;
 
   if (devices.length < 3) {
     top = devices.length;
-    sentence += 'here are all the device usage for this month: ';
+    sentence += 'here are all the device usage for this month,';
   } else {
-    sentence += 'here are the top 3 energy consuming device for this month: ';
+    sentence += 'here are the top 3 energy consuming device for this month,';
   }
 
   for (let i = 0; i < top; i++) {
-    sentence += `${devices[i].name} used ${devices[i].kWh} kilowatt hours\n`;
+    sentence += `${devices[i].name} used ${roundKWh(
+      devices[i].kWh
+    )} kilowatt hours,\n`;
+
   }
 
   return sentence;
