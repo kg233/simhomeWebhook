@@ -8,8 +8,14 @@ const getEnergy = require('../fulfillments/getEnergy');
 const getMonthly = require('../fulfillments/getMonthly');
 const getTop3 = require('../fulfillments/getTop3');
 const getDevices = require('../fulfillments/getDevices');
+const getRebateInfo = require('../fulfillments/getRebate');
 
 router.post('/', function(req, res, next) {
+  //Process to creating a response:
+  // call a function that generates a readable response in form of a string
+  // use the makeRes function to put that string into dialog format json
+  // send the json
+
   console.log(JSON.stringify(req.body));
 
   let intent = req.body.queryResult.intent.displayName;
@@ -38,10 +44,17 @@ router.post('/', function(req, res, next) {
     });
   } else if (intent === 'get-top-3' || intent === 'want-top-3-yes') {
     ////////////////////////////////////////top 3 for this month
-    getTop3().then(({ sentence, outList }) => {
-      let response = makeRes(sentence, platform);
+    getTop3().then(({ sentence, outputList }) => {
+      console.log(outputList);
+      let outputContext = {
+        name: session + '/contexts/rebate-id',
+        lifespanCount: 2,
+        parameters: { ids: outputList },
+      };
 
-      console.log('sending: ' + response);
+      let response = makeRes(sentence, platform, [outputContext]);
+
+      console.log('sending: ' + JSON.stringify(response));
       res.send(response);
     });
   } else if (intent === 'ask-devices') {
@@ -96,7 +109,21 @@ router.post('/', function(req, res, next) {
     res.send(response);
   } else if (intent === 'rebate-yes') {
     //////////////////////////////////////// get rebates, get the wanted id from output context
-    console.log(req.body);
+
+    let arr = [];
+
+    for (let context of req.body.queryResult.outputContexts) {
+      if (context.name.endsWith('rebate-id')) {
+        arr = context.parameters.ids;
+      }
+    }
+    console.log(arr);
+    getRebateInfo(arr).then(resString => {
+      let response = makeRes(resString, platform);
+
+      console.log('sending: ' + JSON.stringify(response));
+      res.send(response);
+    });
   }
 });
 
