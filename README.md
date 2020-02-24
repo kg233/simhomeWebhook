@@ -14,4 +14,6 @@ simhome webhook
 
   use ngrok application to get the https forwarding url, paste this url into webhook url in dialogflow
 
+  this is only local, use heroku or other if you want a remote server
+
   add `/users` at the end of url
