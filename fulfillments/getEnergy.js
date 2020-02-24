@@ -1,6 +1,6 @@
 //get energy for a device specified a time period and return a readable string
 //todo: when user doesn't specify a period, default to a month
-
+const roundKWh = require('../utils/roundKWh');
 const axios = require('axios');
 
 const threeDays = 259200000; //if <= three days, we return each individual
@@ -61,12 +61,16 @@ function fetchEnergy(deviceName, id, period) {
 
         let sentence = `Energy use for ${deviceName}: `;
         for (var key in groups) {
-          sentence += `on the ${key}th you used ${groups[key]} units of energy; `;
+          sentence += `on the ${key}th you used ${roundKWh(
+            groups[key]
+          )} units of energy; `;
         }
-        sentence += `total energy used is ${response.data.kWh} kWh`;
+        sentence += `total energy used is ${roundKWh(response.data.kWh)} kWh`;
         return sentence;
       } else {
-        return `the total energy cost for ${deviceName} is ${response.data.kWh} kwh`;
+        return `the total energy cost for ${deviceName} is ${roundKWh(
+          response.data.kWh
+        )} kwh`;
       }
     })
     .catch(err => {

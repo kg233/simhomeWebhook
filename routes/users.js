@@ -33,7 +33,7 @@ router.post('/', function(req, res, next) {
       console.log('sending: ' + JSON.stringify(response));
       res.send(response);
     });
-  } else if (intent === 'get-top-3') {
+  } else if (intent === 'get-top-3' || intent === 'get-monthly-total-yes') {
     getTop3().then(resString => {
       let response = makeRes(resString, platform);
 
