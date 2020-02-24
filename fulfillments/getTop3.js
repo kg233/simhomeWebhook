@@ -43,15 +43,18 @@ async function getTop3(start) {
   } else {
     sentence += 'here are the top 3 energy consuming device for this month,';
   }
+  let outputList = [];
+  // this list stores information about the top 3 usage devices, store them in the to context
+  // which can be then used to retrieve rebates if user wants
 
   for (let i = 0; i < top; i++) {
     sentence += `${devices[i].name} used ${roundKWh(
       devices[i].kWh
     )} kilowatt hours,\n`;
-
+    outputList.push({ id: devices[i].id, name: devices[i].name });
   }
 
-  return sentence;
+  return { sentence, outputList };
 }
 
 function getDatePeriod() {
