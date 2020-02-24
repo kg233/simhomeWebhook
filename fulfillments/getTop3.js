@@ -1,29 +1,46 @@
+//getTop3.js
+//get the total energy usage for this month as well as the top 3 energy consuming devices
+
+const urlMaker = require('../utils/urlMaker');
 const axios = require('axios');
 
-async function getTop3FromN(start) {
+async function getTop3(start) {
+  let top = 3;
   let period = getDatePeriod();
-  let keyList;
-  let idNameMap;
-  let energyData = {};
+  let monthlyTotal;
+  let devices;
 
   try {
-    idNameMap = await getIDNameMapping();
+    const { startDate, endDate } = period;
+    const { data } = await axios.get(
+      urlMaker(process.env.getTotalDistribution, [
+        'StartDate=' + startDate,
+        'EndDate=' + endDate,
+      ])
+    );
 
-    console.log('querying all devices for energy usage');
-    for (let key in idNameMap) {
-      let c = await queryCost(key, period);
-      energyData[key] = c;
-    }
-    console.log('DONE');
-    keyList = Object.keys(energyData);
-    keyList.sort((a, b) => energyData[b] - energyData[a]);
+    monthlyTotal = data.total;
+
+    devices = data.data;
+    devices.sort((a, b) => {
+      a.kWh - b.kWh;
+    });
   } catch (err) {
     console.log(err);
     return 'error occured, please try again later';
   }
-  let sentence = '';
-  for (let i = start; i < keyList.length || i < start + 3; i++) {
-    sentence += `${idNameMap[keyList[i]]} used ${energyData[keyList[i]]} kwh\n`;
+
+  let sentence = `You have used ${monthlyTotal} kilowatt hours of energy, `;
+
+  if (devices.length < 3) {
+    top = devices.length;
+    sentence += 'here are all the device usage for this month: ';
+  } else {
+    sentence += 'here are the top 3 energy consuming device for this month: ';
+  }
+
+  for (let i = 0; i < top; i++) {
+    sentence += `${devices[i].name} used ${devices[i].kWh} kilowatt hours\n`;
   }
 
   return sentence;
@@ -37,29 +54,4 @@ function getDatePeriod() {
   return { startDate, endDate };
 }
 
-async function getIDNameMapping() {
-  result = await axios.get(process.env.deviceLink);
-
-  return result.data
-    .filter(elem => {
-      return elem.device_name != null;
-    })
-    .map(elem => {
-      return {
-        device_id: elem.device_id,
-        device_name: elem.device_name.toLowerCase(),
-      };
-    })
-    .reduce((total, current) => {
-      total[current.device_id] = current.device_name;
-      return total;
-    }, {});
-}
-
-async function queryCost(id, period) {
-  return await axios.get(
-    `http://pluto.calit2.uci.edu:8081/v1/energy/usage?DeviceID=${id}&StartDate=${period.startDate}&EndDate=${period.endDate}`
-  );
-}
-
-module.exports = getTop3FromN;
+module.exports = getTop3;
