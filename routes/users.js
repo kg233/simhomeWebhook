@@ -8,18 +8,26 @@ const getEnergy = require('../fulfillments/getEnergy');
 const getMonthly = require('../fulfillments/getMonthly');
 const getTop3 = require('../fulfillments/getTop3');
 const getDevices = require('../fulfillments/getDevices');
+const getRebateInfo = require('../fulfillments/getRebate');
 
 router.post('/', function(req, res, next) {
+  //Process to creating a response:
+  // call a function that generates a readable response in form of a string
+  // use the makeRes function to put that string into dialog format json
+  // send the json
+
   console.log(JSON.stringify(req.body));
 
   let intent = req.body.queryResult.intent.displayName;
   let platform = req.body.originalDetectIntentRequest.source;
+  let session = req.body.session;
   console.log('intent: ' + intent);
   if (intent === 'Default Welcome Intent') {
     let resString = 'Hello!, ask me about energy datas!';
     let response = makeRes(resString, platform);
     res.send(response);
   } else if (intent === 'get-energy') {
+    ////////////////////////////////////////Basic energy audit
     getEnergy(req.body.queryResult.parameters).then(resString => {
       let response = makeRes(resString, platform);
 
@@ -27,24 +35,30 @@ router.post('/', function(req, res, next) {
       res.send(response);
     });
   } else if (intent === 'get-monthly-total') {
+    ////////////////////////////////////////get monthly total
     getMonthly().then(result => {
       let response = makeRes(result, platform);
 
       console.log('sending: ' + JSON.stringify(response));
       res.send(response);
     });
+  } else if (intent === 'get-top-3' || intent === 'want-top-3-yes') {
+    ////////////////////////////////////////top 3 for this month
+    getTop3().then(({ sentence, outputList }) => {
+      console.log(outputList);
+      let outputContext = {
+        name: session + '/contexts/rebate-id',
+        lifespanCount: 2,
+        parameters: { ids: outputList },
+      };
 
-  } else if (intent === 'get-top-3' || intent === 'get-monthly-total-yes') {
+      let response = makeRes(sentence, platform, [outputContext]);
 
-    getTop3().then(resString => {
-      let response = makeRes(resString, platform);
-
-      console.log('sending: ' + response);
+      console.log('sending: ' + JSON.stringify(response));
       res.send(response);
     });
   } else if (intent === 'ask-devices') {
-    //return the number of devices user has, then follow up intent to read each devices' name
-    //get the list of devices from api, store them in context to be extracted later
+    ////////////////////////////////////////get device counts
     getDevices().then(deviceList => {
       if (typeof deviceList === 'string') {
         let response = makeRes(
@@ -55,25 +69,34 @@ router.post('/', function(req, res, next) {
         console.log('sending: ' + response);
         res.send(response);
       } else {
+        let outContext = {
+          name: session + '/contexts/deviceList',
+          lifespanCount: 2,
+          parameters: { list: deviceList },
+        };
+
         let response = makeRes(
           `you have ${deviceList.length} device${
             deviceList.length == 1 ? '' : 's'
           }, would you like to hear the name${
             deviceList.length == 1 ? '' : 's'
           }?`,
-          platform
+          platform,
+          [outContext]
         );
-        response.outputContexts.push(req.body.queryResult.outputContexts[0]);
-        response.outputContexts[0].parameters = { list: deviceList };
         console.log('sending: ' + JSON.stringify(response));
         res.send(response);
       }
     });
   } else if (intent === 'ask-devices - yes') {
-    let arr =
-      req.body.queryResult.outputContexts[
-        req.body.queryResult.outputContexts.length - 2
-      ].parameters.list;
+    //////////////////////////////////////// get device names
+    let arr = [];
+    for (let context of req.body.queryResult.outputContexts) {
+      if (context.name.endsWith('devicelist')) {
+        arr = context.parameters.list;
+      }
+    }
+
     console.log(arr);
     let strRes = 'Here are the list of devices: \n';
     arr.forEach(ele => {
@@ -84,6 +107,23 @@ router.post('/', function(req, res, next) {
 
     console.log('sending: ' + JSON.stringify(response));
     res.send(response);
+  } else if (intent === 'rebate-yes') {
+    //////////////////////////////////////// get rebates, get the wanted id from output context
+
+    let arr = [];
+
+    for (let context of req.body.queryResult.outputContexts) {
+      if (context.name.endsWith('rebate-id')) {
+        arr = context.parameters.ids;
+      }
+    }
+    console.log(arr);
+    getRebateInfo(arr).then(resString => {
+      let response = makeRes(resString, platform);
+
+      console.log('sending: ' + JSON.stringify(response));
+      res.send(response);
+    });
   }
 });
 
