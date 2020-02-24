@@ -2,7 +2,7 @@
 //currently platform only checks for google
 //no context at all
 
-function makeRes(msg, google) {
+function makeRes(msg, google, outputContexts) {
   if (google) {
     return {
       fulfillmentMessages: [
@@ -45,7 +45,7 @@ function makeRes(msg, google) {
           platform: 'ACTIONS_ON_GOOGLE',
         },
       ],
-      outputContexts: [],
+      outputContexts: outputContexts ? [...outputContexts] : [],
     };
   } else {
     return {
@@ -68,7 +68,7 @@ function makeRes(msg, google) {
           },
         },
       ],
-      outputContexts: [],
+      outputContexts: outputContexts ? [...outputContexts] : [],
     };
   }
 }
