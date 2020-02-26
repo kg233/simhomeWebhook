@@ -36,7 +36,7 @@ router.post('/', function(req, res, next) {
     });
   } else if (intent === 'get-monthly-total') {
     ////////////////////////////////////////get monthly total
-    getMonthly().then(result => {
+    getMonthly(req.body.queryResult.parameters).then(result => {
       let response = makeRes(result, platform);
 
       console.log('sending: ' + JSON.stringify(response));
