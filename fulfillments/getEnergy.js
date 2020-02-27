@@ -1,6 +1,8 @@
 //get energy for a device specified a time period and return a readable string
 //todo: when user doesn't specify a period, default to a month
 const roundKWh = require('../utils/roundKWh');
+const dayPeriod = require('../utils/dayPeriod');
+
 const axios = require('axios');
 
 const threeDays = 259200000; //if <= three days, we return each individual
@@ -40,6 +42,15 @@ function getId(name) {
 function fetchEnergy(deviceName, id, period) {
   //NOT DONE, what about user not specifying a device?
 
+  if (typeof period === 'string') {
+    period = dayPeriod(period);
+  }
+
+  console.log('periods: ', JSON.stringify(period));
+  console.log(
+    'url: ',
+    `${process.env.getEnergyURL}?DeviceID=${id}&StartDate=${period.startDate}&EndDate=${period.endDate}`
+  );
   return axios
     .get(
       `${process.env.getEnergyURL}?DeviceID=${id}&StartDate=${period.startDate}&EndDate=${period.endDate}`
@@ -48,7 +59,8 @@ function fetchEnergy(deviceName, id, period) {
       //console.log('here', response.data);
       if (
         Date.parse(period.endDate) - Date.parse(period.startDate) <=
-        threeDays
+          threeDays &&
+        false
       ) {
         let groups = {};
         response.data.data.forEach(use => {

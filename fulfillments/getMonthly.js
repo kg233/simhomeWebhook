@@ -7,9 +7,8 @@ const roundKWh = require('../utils/roundKWh');
 const axios = require('axios');
 
 async function getMonthly() {
-
   //default to current month
-  let {startDate, endDate} = monthPeriod();
+  let { startDate, endDate } = monthPeriod();
 
   console.log(JSON.stringify(startDate), JSON.stringify(endDate));
   try {
