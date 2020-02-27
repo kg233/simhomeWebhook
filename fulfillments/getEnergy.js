@@ -11,6 +11,11 @@ async function getEnergy(param) {
   let deviceId = null;
 
   deviceId = await getId(param.deviceName);
+
+  if (deviceId === 'getting device id failed, you can try again') {
+    return deviceId;
+  }
+
   energyStr = await fetchEnergy(param.deviceName, deviceId, param.datePeriod);
 
   return energyStr;
