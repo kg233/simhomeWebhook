@@ -22,6 +22,7 @@ router.post('/', function(req, res, next) {
   let platform = req.body.originalDetectIntentRequest.source;
   let session = req.body.session;
   console.log('intent: ' + intent);
+  
   if (intent === 'Default Welcome Intent') {
     let resString = 'Hello!, ask me about energy datas!';
     let response = makeRes(resString, platform);
