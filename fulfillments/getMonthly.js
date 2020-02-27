@@ -6,9 +6,25 @@ const roundKWh = require('../utils/roundKWh');
 
 const axios = require('axios');
 
-async function getMonthly() {
+async function getMonthly(params) {
   //default to current month
-  let { startDate, endDate } = monthPeriod();
+  const { monthOrWeek } = params;
+  let startDate;
+  let endDate;
+
+  if (monthOrWeek == '' || monthOrWeek == 'this month') {
+    let d = monthPeriod();
+    startDate = d.startDate;
+    endDate = d.endDate;
+  } else {
+    today = new Date();
+    startDate = new Date(
+      today.getFullYear(),
+      today.getMonth(),
+      today.getDate() - 7
+    );
+    endDate = today;
+  }
 
   console.log(JSON.stringify(startDate), JSON.stringify(endDate));
   try {
@@ -17,15 +33,15 @@ async function getMonthly() {
     );
 
     if (res.data < 0.00000001) {
-      return `you used no energy this month yet.`;
+      return `you used no energy ${monthOrWeek} yet.`;
     }
 
-    return `current total energy use for this month  is ${roundKWh(
+    return `current total energy use for ${monthOrWeek} is ${roundKWh(
       res.data
     )} kilowatt hours. Would you like to know what are the top 3 energy consuming devices?`;
   } catch (err) {
     console.log(err);
-    return `unable to get this month total, please try again`;
+    return `unable to get ${monthOrWeek}'s total, please try again`;
   }
 }
 
