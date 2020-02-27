@@ -54,6 +54,8 @@ async function getTop3(start) {
     outputList.push({ id: devices[i].id, name: devices[i].name });
   }
 
+  sentence += 'would you like to hear their rebate informations?';
+
   return { sentence, outputList };
 }
 
