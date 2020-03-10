@@ -22,7 +22,7 @@ function makeRes(msg, google, outputContexts) {
             title: `${msg}`,
             image: {
               imageUri:
-                'https://thumbs.gfycat.com/ImmenseNeglectedBooby-max-1mb.gif',
+                'https://i2.wp.com/revsustainability.com/wp-content/uploads/2015/05/calpluglogo.jpg',
               accessibilityText: 'accessibility text',
             },
           },
