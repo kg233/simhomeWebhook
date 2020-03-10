@@ -19,7 +19,7 @@ function makeRes(msg, google, outputContexts) {
         },
         {
           basicCard: {
-            title: { msg },
+            title: `${msg}`,
             image: {
               imageUri:
                 'https://thumbs.gfycat.com/ImmenseNeglectedBooby-max-1mb.gif',
