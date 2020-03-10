@@ -19,7 +19,7 @@ function makeRes(msg, google, outputContexts) {
         },
         {
           basicCard: {
-            title: 'template',
+            title: { msg },
             image: {
               imageUri:
                 'https://thumbs.gfycat.com/ImmenseNeglectedBooby-max-1mb.gif',
@@ -28,22 +28,22 @@ function makeRes(msg, google, outputContexts) {
           },
           platform: 'ACTIONS_ON_GOOGLE',
         },
-        {
-          suggestions: {
-            suggestions: [
-              {
-                title: 'suggestion1',
-              },
-              {
-                title: 'suggestion2',
-              },
-              {
-                title: 'suggestion3',
-              },
-            ],
-          },
-          platform: 'ACTIONS_ON_GOOGLE',
-        },
+        // {
+        //   suggestions: {
+        //     suggestions: [
+        //       {
+        //         title: 'suggestion1',
+        //       },
+        //       {
+        //         title: 'suggestion2',
+        //       },
+        //       {
+        //         title: 'suggestion3',
+        //       },
+        //     ],
+        //   },
+        //   platform: 'ACTIONS_ON_GOOGLE',
+        // },
       ],
       outputContexts: outputContexts ? [...outputContexts] : [],
     };
