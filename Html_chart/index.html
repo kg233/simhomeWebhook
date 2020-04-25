@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<head>
+    
+    <!-- implement Chart.js as tool to plot chart -->
+    <script src = "https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js" ></script>
+    <!-- <script type="javascript" src='data_file.js'> </script> -->
+    <link rel = "stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <title>My chart.js Chart</title>
+</head>
+<body>
+    <script src="data_file.js"> </script>
+
+    <div class = "container">
+        <canvas id = "chart"></canvas>
+    </div>
+
+    <script>
+        let chart = document.getElementById('chart').getContext('2d');
+
+        Chart.defaults.global.defaultFontFamily = 'Lato';
+        Chart.defaults.global.defaultFontSize = 18;
+        Chart.defaults.global.defaultFontColor = '#777';
+
+        let actual_data = device_list;
+        let masspopchart  = new Chart(chart,{
+            type:chart_type,  //bar,horizontal bar, pie, line,dougnut, radar, polorarea
+            data:{
+                labels:actual_data,
+                datasets:[
+                    {
+                        label:'Energy consumption/KWH',
+                        data:energy_consumption,
+                        backgroundColor :Color_list,
+                        borderWidth:1,
+                        boarderColor:'#777',
+                        hoverBorderWidth:3,
+                        hoverBorderColor:'#000'
+                    }
+                ]
+
+            },
+            options:{
+                title:{
+                    display:true,
+                    text:"Devices Energy Consumption",
+                    fontSize:25,
+                },
+                legend:{
+                    position:"right",
+                    labels:{
+                        fontColor:"#000"
+                    },
+                    layout:{
+                        padding:{
+                            left:50,
+                            right:0,
+                            buttom:0,
+                            top:0
+                        }
+                    }
+                }
+            }
+
+        });
+    </script>
+</body>
+</html>
