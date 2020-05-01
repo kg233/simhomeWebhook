@@ -18,3 +18,57 @@ var Color_list = [
     'rgba(75,192,192,0.6)',
     'rgba(153,102,255,0.6)',
 ]
+
+var vari_chart = document.getElementById('chart');
+var display_chart;
+
+Chart.defaults.global.defaultFontFamily = 'Lato';
+Chart.defaults.global.defaultFontSize = 18;
+Chart.defaults.global.defaultFontColor = '#777';
+
+let actual_data = device_list;
+
+function draw_graph(){
+    display_chart = new Chart(vari_chart,{
+        type:chart_type,  //bar,horizontal bar, pie, line,dougnut, radar, polorarea
+        data:{
+                    labels:actual_data,
+                    datasets:[
+                        {
+                            label:'Energy consumption/KWH',
+                            data:energy_consumption,
+                            backgroundColor :Color_list,
+                            borderWidth:1,
+                            boarderColor:'#777',
+                            hoverBorderWidth:3,
+                            hoverBorderColor:'#000'
+                        }
+                    ]
+            
+                },
+                options:{
+                    title:{
+                        display:true,
+                        text:"Devices Energy Consumption",
+                        fontSize:25,
+                    },
+                    legend:{
+                        position:"right",
+                        labels:{
+                            fontColor:"#000"
+                        },
+                        layout:{
+                            padding:{
+                                left:50,
+                                right:0,
+                                buttom:0,
+                                top:0
+                            }
+                        }
+                    }
+                }
+            }
+        )
+    }
+
+draw_graph();
