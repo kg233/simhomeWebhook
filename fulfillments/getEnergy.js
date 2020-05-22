@@ -17,30 +17,33 @@ async function getEnergy(param) {
   }
 
   energyStr = await fetchEnergy(param.deviceName, deviceId, param.datePeriod);
-
-  return energyStr;
+  return { id: deviceId, result: energyStr };
 }
 
 function getId(name) {
   return axios
     .get(process.env.deviceLink)
-    .then(result => {
+    .then((result) => {
       let deviceIds = result.data
-        .filter(elem => {
+        .filter((elem) => {
           return elem.device_name != null;
         })
-        .map(elem => {
+        .map((elem) => {
           return {
             device_id: elem.device_id,
             device_name: elem.device_name.toLowerCase(),
           };
         });
-      let id = deviceIds.filter(elem => elem.device_name == name)[0].device_id;
+      let id = deviceIds.filter((elem) => elem.device_name == name)[0]
+        .device_id;
       return id;
     })
-    .catch(error => {
+    .catch((error) => {
       console.log('getting device id failed');
-      return 'getting device id failed, you can try again';
+      return {
+        id: null,
+        result: 'getting device id failed, you can try again',
+      };
     });
 }
 
@@ -50,31 +53,23 @@ function fetchEnergy(deviceName, id, period) {
   if (typeof period === 'string') {
     period = dayPeriod(period);
   }
-
-  console.log('periods: ', JSON.stringify(period));
-  console.log(
-    'url: ',
-    `${process.env.getEnergyURL}?DeviceID=${id}&StartDate=${period.startDate}&EndDate=${period.endDate}`
-  );
   return axios
     .get(
       `${process.env.getEnergyURL}?DeviceID=${id}&StartDate=${period.startDate}&EndDate=${period.endDate}`
     )
-    .then(response => {
-      //console.log('here', response.data);
+    .then((response) => {
       if (
         Date.parse(period.endDate) - Date.parse(period.startDate) <=
           threeDays &&
         false
       ) {
         let groups = {};
-        response.data.data.forEach(use => {
+        response.data.data.forEach((use) => {
           let d = new Date(use.energy_timestamp);
           let date = d.getDate();
           groups[date] = groups[date] || 0;
           groups[date] += use.energy_value;
         });
-        //console.log(groups);
 
         let sentence = `Energy use for ${deviceName}: `;
         for (var key in groups) {
@@ -90,9 +85,12 @@ function fetchEnergy(deviceName, id, period) {
         )} kwh`;
       }
     })
-    .catch(err => {
+    .catch((err) => {
       console.log(err);
-      return 'failed to get energy data, please try again';
+      return {
+        id: null,
+        result: 'failed to get energy data, please try again',
+      };
     });
 }
 
