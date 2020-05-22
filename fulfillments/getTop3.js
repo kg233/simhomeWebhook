@@ -7,7 +7,7 @@ const roundKWh = require('../utils/roundKWh');
 
 const axios = require('axios');
 
-async function getTop3(start) {
+async function getTop3() {
   let top = 3;
   let period = getDatePeriod();
   let monthlyTotal;

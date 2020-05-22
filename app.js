@@ -1,41 +1,76 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
+require('dotenv').config();
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const express = require('express');
+const bodyParser = require('body-parser');
+const { dialogflow, HtmlResponse } = require('actions-on-google');
+const { devices, getEnergy, getMonthly, getTop3 } = require('./fulfillments/');
 
-var app = express();
+const dayPeriod = require('./utils/dayPeriod');
 
-// view engine setup
-app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+let hasScreen = false;
 
-app.use(logger('dev'));
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
-app.use('/', indexRouter);
-app.use('/users', usersRouter);
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  next(createError(404));
+// ... app code here
+const app = dialogflow({
+  debug: true,
 });
 
-// error handler
-app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render('error');
+app.intent('welcome', (conv) => {
+  if (conv.surface.capabilities.has('actions.capability.INTERACTIVE_CANVAS')) {
+    hasScreen = true;
+  }
+  conv.ask('Welcome to Simhome smart auditor.');
 });
 
-module.exports = app;
+app.intent('devices', (conv) => {
+  return devices().then((resString) => {
+    conv.ask(resString);
+  });
+});
+
+app.intent('show', (conv) => {
+  conv.ask(
+    new HtmlResponse({
+      url: `${conv.parameters.url}`,
+    })
+  );
+});
+
+app.intent('auditEnergy', (conv) => {
+  return getEnergy(conv.parameters).then(({ id, result }) => {
+    conv.add(result);
+    if (id && hasScreen) {
+      let period = conv.parameters.datePeriod;
+
+      if (typeof conv.parameters.datePeriod === 'string') {
+        period = dayPeriod(conv.parameters.datePeriod);
+      }
+      const { startDate, endDate } = period;
+      let url = `https://pluto.calit2.uci.edu/#/sales/LineChart?id=${id}&startDate=${startDate}&endDate=${endDate}`;
+
+      conv.ask(
+        new HtmlResponse({
+          url,
+          updatedState: { test: 123 },
+        })
+      );
+    }
+  });
+});
+
+app.intent('monthlyTotal', (conv) => {
+  return getMonthly(conv.parameters).then((resString) => {
+    conv.add(resString);
+  });
+});
+
+app.intent('getTop3', (conv) => {
+  return getTop3().then((resString) => {
+    conv.add(resString);
+  });
+});
+
+const expressApp = express().use(bodyParser.json());
+
+expressApp.post('/fulfillment', app);
+
+expressApp.listen(process.env.PORT || 3000);
