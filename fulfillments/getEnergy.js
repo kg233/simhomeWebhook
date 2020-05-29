@@ -61,7 +61,7 @@ function fetchEnergy(deviceName, id, period) {
       if (
         Date.parse(period.endDate) - Date.parse(period.startDate) <=
           threeDays &&
-        false
+        false // three day turned off right now
       ) {
         let groups = {};
         response.data.data.forEach((use) => {

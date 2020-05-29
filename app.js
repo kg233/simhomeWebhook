@@ -9,6 +9,15 @@ const dayPeriod = require('./utils/dayPeriod');
 
 let hasScreen = false;
 
+//for google nest hub, if the two url is the same except for the parameters, the nest hub would treat
+//the two as the same url and not do any updates. Therefore if the user querys for one device's energy,
+//then query for another, the website would not update since the only thing changed is the params.
+//which is the reason two endpoints are being used..
+
+//can solve this with a custom webapp made for handling interactive canvas requests... But this would mean
+//reimplementing the code from webapp team.
+let url1 = true; //used to swtich between the two urls
+
 // ... app code here
 const app = dialogflow({
   debug: true,
@@ -45,7 +54,11 @@ app.intent('auditEnergy', (conv) => {
         period = dayPeriod(conv.parameters.datePeriod);
       }
       const { startDate, endDate } = period;
-      let url = `https://pluto.calit2.uci.edu/#/sales/LineChart?id=${id}&startDate=${startDate}&endDate=${endDate}`;
+      let url = url1
+        ? `https://pluto.calit2.uci.edu/#/sales/Linechartgooglehub1?id=${id}&startDate=${startDate}&endDate=${endDate}`
+        : `https://pluto.calit2.uci.edu/#/sales/Linechartgooglehub2?id=${id}&startDate=${startDate}&endDate=${endDate}`;
+
+      url1 = !url1;
 
       conv.ask(
         new HtmlResponse({
