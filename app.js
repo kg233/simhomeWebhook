@@ -55,8 +55,8 @@ app.intent('auditEnergy', (conv) => {
       }
       const { startDate, endDate } = period;
       let url = url1
-        ? `https://pluto.calit2.uci.edu/#/sales/Linechartgooglehub1?id=${id}&startDate=${startDate}&endDate=${endDate}`
-        : `https://pluto.calit2.uci.edu/#/sales/Linechartgooglehub2?id=${id}&startDate=${startDate}&endDate=${endDate}`;
+        ? `https://pluto.calit2.uci.edu/#/ghub/linechart1?id=${id}&startDate=${startDate}&endDate=${endDate}`
+        : `https://pluto.calit2.uci.edu/#/ghub/linechart2?id=${id}&startDate=${startDate}&endDate=${endDate}`;
 
       url1 = !url1;
 
